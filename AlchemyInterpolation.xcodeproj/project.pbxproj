@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		83321DF71D1487DA0006C76F /* simd+Interpolation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83321DF61D1487DA0006C76F /* simd+Interpolation.swift */; };
-		83321DF91D14884A0006C76F /* CoreGraphics+Interpolation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83321DF81D14884A0006C76F /* CoreGraphics+Interpolation.swift */; };
+		83321DF71D1487DA0006C76F /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83321DF61D1487DA0006C76F /* Extensions.swift */; };
 		_LinkFileRef_AlchemyInterpolation_via_AlchemyInterpolationTestSuite /* AlchemyInterpolation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "_____Product_AlchemyInterpolation" /* AlchemyInterpolation.framework */; };
 		__src_cc_ref_Sources/AlchemyInterpolation.swift /* Interpolation.swift in Sources */ = {isa = PBXBuildFile; fileRef = __PBXFileRef_Sources/AlchemyInterpolation.swift /* Interpolation.swift */; };
 		__src_cc_ref_Tests/AlchemyInterpolation/AlchemyInterpolationTests.swift /* AlchemyInterpolationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = __PBXFileRef_Tests/AlchemyInterpolation/AlchemyInterpolationTests.swift /* AlchemyInterpolationTests.swift */; };
@@ -26,8 +25,7 @@
 
 /* Begin PBXFileReference section */
 		83321DF51D141F5C0006C76F /* Demo.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Demo.playground; sourceTree = "<group>"; };
-		83321DF61D1487DA0006C76F /* simd+Interpolation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "simd+Interpolation.swift"; path = "Sources/simd+Interpolation.swift"; sourceTree = "<group>"; };
-		83321DF81D14884A0006C76F /* CoreGraphics+Interpolation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CoreGraphics+Interpolation.swift"; path = "Sources/CoreGraphics+Interpolation.swift"; sourceTree = "<group>"; };
+		83321DF61D1487DA0006C76F /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Extensions.swift; path = Sources/Extensions.swift; sourceTree = "<group>"; };
 		835F11551D14065700785D83 /* LICENSE.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		835F11561D14065700785D83 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		__PBXFileRef_AlchemyInterpolation.xcodeproj/Configs/Project.xcconfig /* Project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Project.xcconfig; path = AlchemyInterpolation.xcodeproj/Configs/Project.xcconfig; sourceTree = "<group>"; };
@@ -111,9 +109,8 @@
 		"_____Sources_" /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				83321DF61D1487DA0006C76F /* Extensions.swift */,
 				__PBXFileRef_Sources/AlchemyInterpolation.swift /* Interpolation.swift */,
-				83321DF81D14884A0006C76F /* CoreGraphics+Interpolation.swift */,
-				83321DF61D1487DA0006C76F /* simd+Interpolation.swift */,
 			);
 			name = Sources;
 			sourceTree = "<group>";
@@ -202,9 +199,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
-				83321DF91D14884A0006C76F /* CoreGraphics+Interpolation.swift in Sources */,
 				__src_cc_ref_Sources/AlchemyInterpolation.swift /* Interpolation.swift in Sources */,
-				83321DF71D1487DA0006C76F /* simd+Interpolation.swift in Sources */,
+				83321DF71D1487DA0006C76F /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

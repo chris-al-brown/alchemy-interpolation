@@ -25,18 +25,16 @@
 // -----------------------------------------------------------------------------
 
 import AlchemyInterpolation
+import CoreGraphics
 
 /// ...
 public struct Circle {
     
     /// ...
-    public var x: Float
+    public var point: CGPoint
     
     /// ...
-    public var y: Float
-
-    /// ...
-    public var radius: Float
+    public var radius: CGFloat
 }
 
 /// ...
@@ -44,7 +42,7 @@ extension Circle: CustomStringConvertible {
     
     /// ...
     public var description: String {
-        return "Circle(\(x), \(y), \(radius))"
+        return "Circle(\(point.x), \(point.y), \(radius))"
     }
 }
 
@@ -52,20 +50,17 @@ extension Circle: CustomStringConvertible {
 extension Circle: Interpolation {
     
     /// ...
-    public typealias InterpolationDistance = Float
+    public typealias InterpolationDistance = CGFloat
     
     /// ...
-    public static func interpolate(from start: Circle, to end: Circle, by distance: Float) -> Circle {
-        let x = start.x.interpolated(to:end.x, by:distance)
-        let y = start.y.interpolated(to:end.y, by:distance)
+    public static func interpolate(from start: Circle, to end: Circle, by distance: CGFloat) -> Circle {
+        let point = start.point.interpolated(to:end.point, by:distance)
         let radius = start.radius.interpolated(to:end.radius, by:distance)
-        return Circle(x:x, y:y, radius:radius)
+        return Circle(point:point, radius:radius)
     }
 }
 
-var circle = Circle(x:0.0, y:0.0, radius:10.0)
-var target = Circle(x:10.0, y:10.0, radius:20.0)
-//var newCircle = circle.interpolated(to:target, by:0.5, using:.cubic)
-var newCircle = circle.interpolated(to:target, by:0.5)
-circle.interpolate(to:target, by:0.5, using:.easeInSine)
+var startCircle = Circle(point:CGPoint(x:0.0, y:0.0), radius:10.0)
+var finalCircle = Circle(point:CGPoint(x:10.0, y:10.0), radius:20.0)
+var currentCircle = startCircle.interpolated(to:finalCircle, by:0.25, using:.easeInOutCircular)
 

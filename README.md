@@ -14,6 +14,7 @@
     <a href="#usage">Usage</a>
     <a href="#references">References</a>
     <a href="#license">License</a>
+    <a href="#todo">TODO</a>
 </p>
 
 AlchemyInterpolation is a Swift framework for interpolations
@@ -24,18 +25,12 @@ AlchemyInterpolation is a Swift framework for interpolations
     - Version: **8.0 beta (8S128d)**
     - Language: **Swift 3.0**
 - OS X
-    - Compatible With: **OS X 10.11**
+    - Latest SDK: **macOS 10.12**
     - Deployment Target: **OS X 10.10**
 
-<!--- iOS-->
-<!--    - Compatible With:   **iOS 9.1**-->
-<!--    - Deployment Target: **iOS 8.0**-->
-<!--- watchOS-->
-<!--    - Compatible With:   **watchOS 2.0**-->
-<!--    - Deployment Target: **watchOS 2.0**-->
-<!--- tvOS-->
-<!--    - Compatible With:   **tvOS 9.0**-->
-<!--    - Deployment Target: **tvOS 9.0**-->
+While AlchemyInterpolation has only been tested on OS X with a beta version of Xcode, 
+it should presumably work on iOS, tvOS, and watchOS as well.  It only depends on the 
+the Swift standard library with optional added extensions to CoreGraphics and simd. 
 
 ## Installation
 
@@ -71,3 +66,9 @@ Check out 'Demo.playground' for example usage.
 ## License
 
 AlchemyInterpolation is released under the [MIT License](LICENSE.md).
+
+## TODO
+
+- [ ] Add easeInBack, easeInOutBack, easeOutBack methods
+- [ ] Add easeInElastic, easeInOutElastic, easeOutElastic methods
+- [ ] Add easeInBounce, easeInOutBounce, easeOutBounce methods

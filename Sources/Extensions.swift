@@ -20,12 +20,15 @@
 // THE SOFTWARE.
 //
 // AlchemyInterpolation
-// CoreGraphics+Interpolation.swift
+// Extensions.swift
 // 06/17/2016
 // -----------------------------------------------------------------------------
 
 import Foundation
+import simd
 import CoreGraphics
+
+/// CoreGraphics Extensions
 
 /// ...
 extension CGFloat: Interpolation {
@@ -43,18 +46,23 @@ extension CGFloat: Interpolation {
 extension CGFloat: InterpolationFloatingPoint {
     
     /// ...
-    public static func easeInSine(by distance: CGFloat) -> CGFloat {
-        return sin((distance - 1.0) * (.pi / 2.0)) + 1.0
+    public static func cos(_ value: CGFloat) -> CGFloat {
+        return CoreGraphics.cos(value)
     }
     
     /// ...
-    public static func easeInCircular(by distance: CGFloat) -> CGFloat {
-        return 1.0 - sqrt(1.0 - (distance * distance))
+    public static func sin(_ value: CGFloat) -> CGFloat {
+        return CoreGraphics.sin(value)
     }
     
     /// ...
-    public static func easeInExponential(by distance: CGFloat) -> CGFloat {
-        return distance == 0.0 ? distance : pow(2, 10 * (distance - 1))
+    public static func sqrt(_ value: CGFloat) -> CGFloat {
+        return CoreGraphics.sqrt(value)
+    }
+    
+    /// ...
+    public static func pow(_ base: CGFloat, _ exponent: CGFloat) -> CGFloat {
+        return CoreGraphics.pow(base, exponent)
     }
 }
 
@@ -114,4 +122,76 @@ extension CGVector: Interpolation {
     }
 }
 
+/// simd Extensions
 
+/// ...
+extension double2: Interpolation {
+    
+    /// ...
+    public typealias InterpolationDistance = Double
+    
+    /// ...
+    public static func interpolate(from start: double2, to end: double2, by distance: Double) -> double2 {
+        return mix(start, end, t:distance)
+    }
+}
+
+/// ...
+extension double3: Interpolation {
+    
+    /// ...
+    public typealias InterpolationDistance = Double
+    
+    /// ...
+    public static func interpolate(from start: double3, to end: double3, by distance: Double) -> double3 {
+        return mix(start, end, t:distance)
+    }
+}
+
+/// ...
+extension double4: Interpolation {
+    
+    /// ...
+    public typealias InterpolationDistance = Double
+    
+    /// ...
+    public static func interpolate(from start: double4, to end: double4, by distance: Double) -> double4 {
+        return mix(start, end, t:distance)
+    }
+}
+
+/// ...
+extension float2: Interpolation {
+    
+    /// ...
+    public typealias InterpolationDistance = Float
+    
+    /// ...
+    public static func interpolate(from start: float2, to end: float2, by distance: Float) -> float2 {
+        return mix(start, end, t:distance)
+    }
+}
+
+/// ...
+extension float3: Interpolation {
+    
+    /// ...
+    public typealias InterpolationDistance = Float
+    
+    /// ...
+    public static func interpolate(from start: float3, to end: float3, by distance: Float) -> float3 {
+        return mix(start, end, t:distance)
+    }
+}
+
+/// ...
+extension float4: Interpolation {
+    
+    /// ...
+    public typealias InterpolationDistance = Float
+    
+    /// ...
+    public static func interpolate(from start: float4, to end: float4, by distance: Float) -> float4 {
+        return mix(start, end, t:distance)
+    }
+}

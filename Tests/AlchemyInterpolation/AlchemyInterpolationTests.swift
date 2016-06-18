@@ -27,7 +27,12 @@
 import XCTest
 @testable import AlchemyInterpolation
 
-/// Returns a uniform Float in [0.0, 1.0] using arc4random
+/// Returns a uniform CGFloat in [0.0, 1.0] using arc4random
+public func uniform() -> CGFloat {
+    return CGFloat(uniform() as Float)
+}
+
+/// Returns a uniform Double in [0.0, 1.0] using arc4random
 public func uniform() -> Double {
     return Double(uniform() as Float)
 }
@@ -46,7 +51,7 @@ public func uniformCast(_ input: UInt32) -> Float {
 }
 
 /// ...
-public let methods: [InterpolationMethod] = [
+public let easeInMethods: [InterpolationMethod] = [
     .easeInLinear,
     .easeInQuadratic,
     .easeInCubic,
@@ -58,74 +63,121 @@ public let methods: [InterpolationMethod] = [
 ]
 
 /// ...
+public let easeInOutMethods: [InterpolationMethod] = [
+    .easeInOutLinear,
+    .easeInOutQuadratic,
+    .easeInOutCubic,
+    .easeInOutQuartic,
+    .easeInOutQuintic,
+    .easeInOutSine,
+    .easeInOutCircular,
+    .easeInOutExponential
+]
+
+/// ...
+public let easeOutMethods: [InterpolationMethod] = [
+    .easeOutLinear,
+    .easeOutQuadratic,
+    .easeOutCubic,
+    .easeOutQuartic,
+    .easeOutQuintic,
+    .easeOutSine,
+    .easeOutCircular,
+    .easeOutExponential
+]
+
+/// ...
+public let allMethods: [InterpolationMethod] = easeInMethods + easeInOutMethods + easeOutMethods
+
+/// ...
 public let sampleCount: Int = 10_000
 
 /// ...
 public class AlchemyInterpolationTests: XCTestCase {
     
     /// ...
-    public func testFloat() {
+    public func testCGFloatBounds() {
         for _ in 0..<sampleCount {
-            let x: Float = uniform()
-            let y: Float = uniform()
+            let x: CGFloat = uniform()
+            let y: CGFloat = uniform()
             let min = Swift.min(x, y)
             let max = Swift.max(x, y)
-            for method in methods {
+            for method in allMethods {
                 let value = min.interpolated(to:max, by:uniform(), using:method)
-                let minValue = min - FLT_EPSILON
-                let maxValue = max + FLT_EPSILON
-                XCTAssert(minValue < value && value < maxValue, "\(method) produced \(value) outside of [\(min), \(max)].")
+                let minValue = min - CGFloat(DBL_EPSILON)
+                let maxValue = max + CGFloat(DBL_EPSILON)
+                XCTAssert(minValue < value && value < maxValue, "\(method) produced \(value) outside of [\(min), \(max)]")
             }
         }
     }
-    
+
     /// ...
-    public func testDouble() {
+    public func testDoubleBounds() {
         for _ in 0..<sampleCount {
             let x: Double = uniform()
             let y: Double = uniform()
             let min = Swift.min(x, y)
             let max = Swift.max(x, y)
-            for method in methods {
+            for method in allMethods {
                 let value = min.interpolated(to:max, by:uniform(), using:method)
                 let minValue = min - DBL_EPSILON
                 let maxValue = max + DBL_EPSILON
-                XCTAssert(minValue < value && value < maxValue, "\(method) produced \(value) outside of [\(min), \(max)].")
+                XCTAssert(minValue < value && value < maxValue, "\(method) produced \(value) outside of [\(min), \(max)]")
             }
         }
     }
 
-//    func testFloat2() {
-//        
-//    }
-//
-//    func testFloat3() {
-//        
-//    }
-//
-//    func testFloat4() {
-//        
-//    }
-//
-//    func testDouble() {
-//        
-//    }
-//
-//    func testDouble2() {
-//        
-//    }
-//
-//    func testDouble3() {
-//        
-//    }
-//
-//    func testDouble4() {
-//        
-//    }
+    /// ...
+    public func testFloatBounds() {
+        for _ in 0..<sampleCount {
+            let x: Float = uniform()
+            let y: Float = uniform()
+            let min = Swift.min(x, y)
+            let max = Swift.max(x, y)
+            for method in allMethods {
+                let value = min.interpolated(to:max, by:uniform(), using:method)
+                let minValue = min - FLT_EPSILON
+                let maxValue = max + FLT_EPSILON
+                XCTAssert(minValue < value && value < maxValue, "\(method) produced \(value) outside of [\(min), \(max)]")
+            }
+        }
+    }
+    
+    /// ...
+    public func testCGFloatContinuity() {
+        for method in easeInOutMethods {
+            let min = CGFloat.interpolate(from:0.0, to:1.0, by:0.5 - CGFloat(DBL_EPSILON))
+            let max = CGFloat.interpolate(from:0.0, to:1.0, by:0.5 + CGFloat(DBL_EPSILON))
+            XCTAssert(max - min <= 2 * CGFloat(DBL_EPSILON), "\(method) is not continuous at 0.5")
+        }
+    }
+
+    /// ...
+    public func testDoubleContinuity() {
+        for method in easeInOutMethods {
+            let min = Double.interpolate(from:0.0, to:1.0, by:0.5 - DBL_EPSILON)
+            let max = Double.interpolate(from:0.0, to:1.0, by:0.5 + DBL_EPSILON)
+            XCTAssert(max - min <= 2 * DBL_EPSILON, "\(method) is not continuous at 0.5")
+        }
+    }
+
+    /// ...
+    public func testFloatContinuity() {
+        for method in easeInOutMethods {
+            let min = Float.interpolate(from:0.0, to:1.0, by:0.5 - FLT_EPSILON)
+            let max = Float.interpolate(from:0.0, to:1.0, by:0.5 + FLT_EPSILON)
+            XCTAssert(max - min <= 2 * FLT_EPSILON, "\(method) is not continuous at 0.5")
+        }
+    }
 
     public static var allTests : [(String, (AlchemyInterpolationTests) -> () throws -> Void)] {
         return [
-            ("testFloat", testFloat),
+            ("testCGFloatBounds", testCGFloatBounds),
+            ("testCGFloatContinuity", testCGFloatContinuity),
+            ("testDoubleBounds", testDoubleBounds),
+            ("testDoubleContinuity", testDoubleContinuity),
+            ("testFloatBounds", testFloatBounds),
+            ("testFloatContinuity", testFloatContinuity)
         ]
     }
 }

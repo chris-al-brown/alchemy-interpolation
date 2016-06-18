@@ -41,13 +41,16 @@ public protocol Interpolation {
 public protocol InterpolationFloatingPoint: FloatingPoint {
 
     /// ...
-    static func easeInSine(by distance: Self) -> Self
-    
-    /// ...
-    static func easeInCircular(by distance: Self) -> Self
+    static func cos(_ value: Self) -> Self
 
     /// ...
-    static func easeInExponential(by distance: Self) -> Self
+    static func sin(_ value: Self) -> Self
+
+    /// ...
+    static func sqrt(_ value: Self) -> Self
+
+    /// ...
+    static func pow(_ base: Self, _ exponent: Self) -> Self
 }
 
 /// ...
@@ -76,6 +79,54 @@ public enum InterpolationMethod {
 
     /// ...
     case easeInExponential
+
+    /// ...
+    case easeInOutLinear
+    
+    /// ...
+    case easeInOutQuadratic
+    
+    /// ...
+    case easeInOutCubic
+    
+    /// ...
+    case easeInOutQuartic
+    
+    /// ...
+    case easeInOutQuintic
+    
+    /// ...
+    case easeInOutSine
+    
+    /// ...
+    case easeInOutCircular
+    
+    /// ...
+    case easeInOutExponential
+    
+    /// ...
+    case easeOutLinear
+    
+    /// ...
+    case easeOutQuadratic
+    
+    /// ...
+    case easeOutCubic
+    
+    /// ...
+    case easeOutQuartic
+    
+    /// ...
+    case easeOutQuintic
+    
+    /// ...
+    case easeOutSine
+    
+    /// ...
+    case easeOutCircular
+    
+    /// ...
+    case easeOutExponential
 }
 
 /// ...
@@ -95,14 +146,104 @@ extension Interpolation {
         case .easeInQuintic:
             return interpolate(from:start, to:end, by:distance * distance * distance * distance * distance)
         case .easeInSine:
-            return interpolate(from:start, to:end, by:InterpolationDistance.easeInSine(by:distance))
+            let value = InterpolationDistance.sin((distance - 1) * (.pi / 2)) + InterpolationDistance(1)
+            return interpolate(from:start, to:end, by:value)
         case .easeInCircular:
-            return interpolate(from:start, to:end, by:InterpolationDistance.easeInCircular(by:distance))
+            let value = 1 - InterpolationDistance.sqrt(1 - (distance * distance))
+            return interpolate(from:start, to:end, by:value)
         case .easeInExponential:
-            return interpolate(from:start, to:end, by:InterpolationDistance.easeInExponential(by:distance))
+            let value = distance == 0 ? 0 : InterpolationDistance.pow(2, 10 * (distance - 1))
+            return interpolate(from:start, to:end, by:value)
+        case .easeInOutLinear:
+            return interpolate(from:start, to:end, by:distance)
+        case .easeInOutQuadratic:
+            let half = InterpolationDistance(sign:.plus, exponent:-2, significand:2)
+            if distance < half {
+                return interpolate(from:start, to:end, by:2 * distance * distance)
+            } else {
+                return interpolate(from:start, to:end, by:4 * distance - 2 * distance * distance - 1)
+            }
+        case .easeInOutCubic:
+            let half = InterpolationDistance(sign:.plus, exponent:-2, significand:2)
+            if distance < half {
+                return interpolate(from:start, to:end, by:4 * distance * distance * distance)
+            } else {
+                let dd = (2 * distance) - 2
+                let _1 = InterpolationDistance(1)
+                return interpolate(from:start, to:end, by:half * dd * dd * dd + _1)
+            }
+        case .easeInOutQuartic:
+            let half = InterpolationDistance(sign:.plus, exponent:-2, significand:2)
+            if distance < half {
+                return interpolate(from:start, to:end, by:8 * distance * distance * distance * distance)
+            } else {
+                let dd = distance - 1
+                return interpolate(from:start, to:end, by:-8 * dd * dd * dd * dd + 1)
+            }
+        case .easeInOutQuintic:
+            let half = InterpolationDistance(sign:.plus, exponent:-2, significand:2)
+            if distance < half {
+                return interpolate(from:start, to:end, by:16 * distance * distance * distance * distance * distance)
+            } else {
+                let dd = (2 * distance) - 2
+                let _1 = InterpolationDistance(1)
+                return interpolate(from:start, to:end, by:half * dd * dd * dd * dd * dd + _1)
+            }
+        case .easeInOutSine:
+            let half = InterpolationDistance(sign:.plus, exponent:-2, significand:2)
+            return interpolate(from:start, to:end, by:half * (1 - InterpolationDistance.cos(distance * .pi)))
+        case .easeInOutCircular:
+            let half = InterpolationDistance(sign:.plus, exponent:-2, significand:2)
+            if distance < half {
+                let value = half * (1 - InterpolationDistance.sqrt(1 - 4 * (distance * distance)))
+                return interpolate(from:start, to:end, by:value)
+            } else {
+                let v1 = -((2 * distance) - 3)
+                let v2 = (2 * distance) - 1
+                let _1 = InterpolationDistance(1)
+                let value = half * (InterpolationDistance.sqrt(v1 * v2) + _1)
+                return interpolate(from:start, to:end, by:value)
+            }
+        case .easeInOutExponential:
+            if distance == 0 || distance == 1 {
+                return interpolate(from:start, to:end, by:distance)
+            } else {
+                let half = InterpolationDistance(sign:.plus, exponent:-2, significand:2)
+                if distance < half {
+                    let value = half * InterpolationDistance.pow(2, (20 * distance) - 10)
+                    return interpolate(from:start, to:end, by:value)
+                } else {
+                    let _1 = InterpolationDistance(1)
+                    let _10 = InterpolationDistance(10)
+                    let value = -half * InterpolationDistance.pow(2, (-20 * distance) + _10) + _1
+                    return interpolate(from:start, to:end, by:value)
+                }
+            }
+        case .easeOutLinear:
+            return interpolate(from:start, to:end, by:distance)
+        case .easeOutQuadratic:
+            return interpolate(from:start, to:end, by:distance * (2 - distance))
+        case .easeOutCubic:
+            let dd = distance - 1
+            return interpolate(from:start, to:end, by:dd * dd * dd + InterpolationDistance(1))
+        case .easeOutQuartic:
+            let dd = distance - 1
+            return interpolate(from:start, to:end, by:dd * dd * dd * (1 - distance) + InterpolationDistance(1))
+        case .easeOutQuintic:
+            let dd = distance - 1
+            return interpolate(from:start, to:end, by:dd * dd * dd * dd * dd + InterpolationDistance(1))
+        case .easeOutSine:
+            let value = InterpolationDistance.sin(distance * (.pi / 2))
+            return interpolate(from:start, to:end, by:value)
+        case .easeOutCircular:
+            let value = InterpolationDistance.sqrt((2 - distance) * distance)
+            return interpolate(from:start, to:end, by:value)
+        case .easeOutExponential:
+            let value = distance == 1 ? distance : 1 - InterpolationDistance.pow(2, 10 * (distance - 1))
+            return interpolate(from:start, to:end, by:value)
         }
     }
-
+    
     /// ...
     public mutating func interpolate(to end: Self, by distance: InterpolationDistance) {
         self = Self.interpolate(from:self, to:end, by:distance, using:.easeInLinear)
@@ -140,18 +281,23 @@ extension Double: Interpolation {
 extension Double: InterpolationFloatingPoint {
 
     /// ...
-    public static func easeInSine(by distance: Double) -> Double {
-        return sin((distance - 1.0) * (.pi / 2.0)) + 1.0
+    public static func cos(_ value: Double) -> Double {
+        return Darwin.cos(value)
     }
     
     /// ...
-    public static func easeInCircular(by distance: Double) -> Double {
-        return 1.0 - sqrt(1.0 - (distance * distance))
+    public static func sin(_ value: Double) -> Double {
+        return Darwin.sin(value)
     }
     
     /// ...
-    public static func easeInExponential(by distance: Double) -> Double {
-        return distance == 0.0 ? distance : pow(2, 10 * (distance - 1))
+    public static func sqrt(_ value: Double) -> Double {
+        return Darwin.sqrt(value)
+    }
+    
+    /// ...
+    public static func pow(_ base: Double, _ exponent: Double) -> Double {
+        return Darwin.pow(base, exponent)
     }
 }
 
@@ -171,373 +317,22 @@ extension Float: Interpolation {
 extension Float: InterpolationFloatingPoint {
 
     /// ...
-    public static func easeInSine(by distance: Float) -> Float {
-        return sin((distance - 1.0) * (.pi / 2.0)) + 1.0
+    public static func cos(_ value: Float) -> Float {
+        return Darwin.cos(value)
     }
     
     /// ...
-    public static func easeInCircular(by distance: Float) -> Float {
-        return 1.0 - sqrt(1.0 - (distance * distance))
+    public static func sin(_ value: Float) -> Float {
+        return Darwin.sin(value)
     }
     
     /// ...
-    public static func easeInExponential(by distance: Float) -> Float {
-        return distance == 0.0 ? distance : pow(2, 10 * (distance - 1))
+    public static func sqrt(_ value: Float) -> Float {
+        return Darwin.sqrt(value)
+    }
+    
+    /// ...
+    public static func pow(_ base: Float, _ exponent: Float) -> Float {
+        return Darwin.pow(base, exponent)
     }
 }
-
-///// AnimationTween
-//public enum AnimationTween {
-//    case Linear
-//    case Quadratic
-//    case Cubic
-//    case Quartic
-//    case Quintic
-//    case Sine
-//    case Circular
-//    case Exponential
-//
-//    private func easeIn(x: Time) -> Time {
-//        switch self {
-//        case .Linear:
-//            return x
-//        case .Quadratic:
-//            return x * x
-//        case .Cubic:
-//            return x * x * x
-//        case .Quartic:
-//            return x * x * x * x
-//        case .Quintic:
-//            return x * x * x * x * x
-//        case .Sine:
-//            return sin((x - 1) * M_PI_2) + 1
-//        case .Circular:
-//            return 1 - sqrt(1 - (x * x))
-//        case .Exponential:
-//            return x == 0.0 ? x : pow(2, 10 * (x - 1))
-//        }
-//    }
-//
-//    private func easeInOut(x: Time) -> Time {
-//        switch self {
-//        case .Linear:
-//            return x
-//        case .Quadratic:
-//            if x < 0.5 {
-//                return 2.0 * x * x
-//            } else {
-//                return 4.0 * x - 2.0 * x * x - 1.0
-//            }
-//        case .Cubic:
-//            if x < 0.5 {
-//                return 4.0 * x * x * x
-//            } else {
-//                let xx = (2 * x) - 2
-//                return 0.5 * xx * xx * xx + 1
-//            }
-//        case .Quartic:
-//            if x < 0.5 {
-//                return 8.0 * x * x * x * x
-//            } else {
-//                let xx = x - 1
-//                return -8.0 * xx * xx * xx * xx + 1
-//            }
-//        case .Quintic:
-//            if x < 0.5 {
-//                return 16.0 * x * x * x * x * x
-//            } else {
-//                let xx = (2 * x) - 2
-//                return  0.5 * xx * xx * xx * xx * xx + 1
-//            }
-//        case .Sine:
-//            return 0.5 * (1 - cos(x * M_PI))
-//        case .Circular:
-//            if x < 0.5 {
-//                return 0.5 * (1 - sqrt(1 - 4 * (x * x)))
-//            } else {
-//                return 0.5 * (sqrt(-((2 * x) - 3) * ((2 * x) - 1)) + 1)
-//            }
-//        case .Exponential:
-//            if x == 0.0 || x == 1.0 {
-//                return x
-//            }
-//            if x < 0.5 {
-//                return  0.5 * pow(2, (20 * x) - 10)
-//            } else {
-//                return -0.5 * pow(2, (-20 * x) + 10) + 1
-//            }
-//        }
-//    }
-//
-//    private func easeOut(x: Time) -> Time {
-//        switch self {
-//        case .Linear:
-//            return x
-//        case .Quadratic:
-//            return x * (2.0 - x)
-//        case .Cubic:
-//            let xx = x - 1
-//            return xx * xx * xx + 1
-//        case .Quartic:
-//            let xx = x - 1
-//            return xx * xx * xx * (1 - x) + 1
-//        case .Quintic:
-//            let xx = x - 1
-//            return xx * xx * xx * xx * xx + 1
-//        case .Sine:
-//            return sin(x * M_PI_2)
-//        case .Circular:
-//            return sqrt((2 - x) * x)
-//        case .Exponential:
-//            return x == 1.0 ? x : 1 - pow(2, -10 * x)
-//        }
-//    }
-//}
-
-///// easeInStep: Float
-//public func easeInStep(animation: Animation<Float>, tween: AnimationTween = .Quadratic) -> Float {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeIn(animation.stepUnit)))
-//}
-//
-///// easeInStep: float2
-//public func easeInStep(animation: Animation<float2>, tween: AnimationTween = .Quadratic) -> float2 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeIn(animation.stepUnit)))
-//}
-//
-///// easeInStep: float3
-//public func easeInStep(animation: Animation<float3>, tween: AnimationTween = .Quadratic) -> float3 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeIn(animation.stepUnit)))
-//}
-//
-///// easeInStep: float4
-//public func easeInStep(animation: Animation<float4>, tween: AnimationTween = .Quadratic) -> float4 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeIn(animation.stepUnit)))
-//}
-//
-///// easeInOutStep: Float
-//public func easeInOutStep(animation: Animation<Float>, tween: AnimationTween = .Quadratic) -> Float {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeInOut(animation.stepUnit)))
-//}
-//
-///// easeInOutStep: float2
-//public func easeInOutStep(animation: Animation<float2>, tween: AnimationTween = .Quadratic) -> float2 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeInOut(animation.stepUnit)))
-//}
-//
-///// easeInOutStep: float3
-//public func easeInOutStep(animation: Animation<float3>, tween: AnimationTween = .Quadratic) -> float3 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeInOut(animation.stepUnit)))
-//}
-//
-///// easeInOutStep: float4
-//public func easeInOutStep(animation: Animation<float4>, tween: AnimationTween = .Quadratic) -> float4 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeInOut(animation.stepUnit)))
-//}
-//
-///// easeOutStep: Float
-//public func easeOutStep(animation: Animation<Float>, tween: AnimationTween = .Quadratic) -> Float {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeOut(animation.stepUnit)))
-//}
-//
-///// easeOutStep: float2
-//public func easeOutStep(animation: Animation<float2>, tween: AnimationTween = .Quadratic) -> float2 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeOut(animation.stepUnit)))
-//}
-//
-///// easeOutStep: float3
-//public func easeOutStep(animation: Animation<float3>, tween: AnimationTween = .Quadratic) -> float3 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeOut(animation.stepUnit)))
-//}
-//
-///// easeOutStep: float4
-//public func easeOutStep(animation: Animation<float4>, tween: AnimationTween = .Quadratic) -> float4 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeOut(animation.stepUnit)))
-//}
-//
-///// easeInPulse: Float
-//public func easeInPulse(animation: Animation<Float>, tween: AnimationTween = .Quadratic) -> Float {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeIn(animation.pulseUnit)))
-//}
-//
-///// easeInPulse: float2
-//public func easeInPulse(animation: Animation<float2>, tween: AnimationTween = .Quadratic) -> float2 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeIn(animation.pulseUnit)))
-//}
-//
-///// easeInPulse: float3
-//public func easeInPulse(animation: Animation<float3>, tween: AnimationTween = .Quadratic) -> float3 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeIn(animation.pulseUnit)))
-//}
-//
-///// easeInPulse: float4
-//public func easeInPulse(animation: Animation<float4>, tween: AnimationTween = .Quadratic) -> float4 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeIn(animation.pulseUnit)))
-//}
-//
-///// easeInOutPulse: Float
-//public func easeInOutPulse(animation: Animation<Float>, tween: AnimationTween = .Quadratic) -> Float {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeInOut(animation.pulseUnit)))
-//}
-//
-///// easeInOutPulse: float2
-//public func easeInOutPulse(animation: Animation<float2>, tween: AnimationTween = .Quadratic) -> float2 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeInOut(animation.pulseUnit)))
-//}
-//
-///// easeInOutPulse: float3
-//public func easeInOutPulse(animation: Animation<float3>, tween: AnimationTween = .Quadratic) -> float3 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeInOut(animation.pulseUnit)))
-//}
-//
-///// easeInOutPulse: float4
-//public func easeInOutPulse(animation: Animation<float4>, tween: AnimationTween = .Quadratic) -> float4 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeInOut(animation.pulseUnit)))
-//}
-//
-///// easeOutPulse: Float
-//public func easeOutPulse(animation: Animation<Float>, tween: AnimationTween = .Quadratic) -> Float {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeOut(animation.pulseUnit)))
-//}
-//
-///// easeOutPulse: float2
-//public func easeOutPulse(animation: Animation<float2>, tween: AnimationTween = .Quadratic) -> float2 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeOut(animation.pulseUnit)))
-//}
-//
-///// easeOutPulse: float3
-//public func easeOutPulse(animation: Animation<float3>, tween: AnimationTween = .Quadratic) -> float3 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeOut(animation.pulseUnit)))
-//}
-//
-///// easeOutPulse: float4
-//public func easeOutPulse(animation: Animation<float4>, tween: AnimationTween = .Quadratic) -> float4 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeOut(animation.pulseUnit)))
-//}
-//
-///// easeInPeriodic: Float
-//public func easeInPeriodic(animation: Animation<Float>, period: Time, tween: AnimationTween = .Quadratic) -> Float {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeIn(animation.periodicUnit(period))))
-//}
-//
-///// easeInPeriodic: float2
-//public func easeInPeriodic(animation: Animation<float2>, period: Time, tween: AnimationTween = .Quadratic) -> float2 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeIn(animation.periodicUnit(period))))
-//}
-//
-///// easeInPeriodic: float3
-//public func easeInPeriodic(animation: Animation<float3>, period: Time, tween: AnimationTween = .Quadratic) -> float3 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeIn(animation.periodicUnit(period))))
-//}
-//
-///// easeInPeriodic: float4
-//public func easeInPeriodic(animation: Animation<float4>, period: Time, tween: AnimationTween = .Quadratic) -> float4 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeIn(animation.periodicUnit(period))))
-//}
-//
-///// easeInOutPeriodic: Float
-//public func easeInOutPeriodic(animation: Animation<Float>, period: Time, tween: AnimationTween = .Quadratic) -> Float {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeInOut(animation.periodicUnit(period))))
-//}
-//
-///// easeInOutPeriodic: float2
-//public func easeInOutPeriodic(animation: Animation<float2>, period: Time, tween: AnimationTween = .Quadratic) -> float2 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeInOut(animation.periodicUnit(period))))
-//}
-//
-///// easeInOutPeriodic: float3
-//public func easeInOutPeriodic(animation: Animation<float3>, period: Time, tween: AnimationTween = .Quadratic) -> float3 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeInOut(animation.periodicUnit(period))))
-//}
-//
-///// easeInOutPeriodic: float4
-//public func easeInOutPeriodic(animation: Animation<float4>, period: Time, tween: AnimationTween = .Quadratic) -> float4 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeInOut(animation.periodicUnit(period))))
-//}
-//
-///// easeOutPeriodic: Float
-//public func easeOutPeriodic(animation: Animation<Float>, period: Time, tween: AnimationTween = .Quadratic) -> Float {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeOut(animation.periodicUnit(period))))
-//}
-//
-///// easeOutPeriodic: float2
-//public func easeOutPeriodic(animation: Animation<float2>, period: Time, tween: AnimationTween = .Quadratic) -> float2 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeOut(animation.periodicUnit(period))))
-//}
-//
-///// easeOutPeriodic: float3
-//public func easeOutPeriodic(animation: Animation<float3>, period: Time, tween: AnimationTween = .Quadratic) -> float3 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeOut(animation.periodicUnit(period))))
-//}
-//
-///// easeOutPeriodic: float4
-//public func easeOutPeriodic(animation: Animation<float4>, period: Time, tween: AnimationTween = .Quadratic) -> float4 {
-//    return mix(animation.startValue, animation.endValue, t:Float(tween.easeOut(animation.periodicUnit(period))))
-//}
-//
-///// Animation<T>
-//public struct Animation<T> {
-//
-//    public init(value: T) {
-//        self.startValue = value
-//        self.endValue = value
-//        self.currentTime = 1_000
-//        self.startTime = 0
-//        self.endTime = 1_000
-//    }
-//
-//    public init(start: T, end: T, duration: Time) {
-//        self.startValue = start
-//        self.endValue = end
-//        self.currentTime = 0
-//        self.startTime = 0
-//        self.endTime = duration
-//    }
-//
-//    public init(start: T, end: T, lag: Time, duration: Time) {
-//        self.startValue = start
-//        self.endValue = end
-//        self.currentTime = 0
-//        self.startTime = lag
-//        self.endTime = lag + duration
-//    }
-//
-//    public mutating func update(deltaTime: Time) {
-//        if currentTime < endTime {
-//            currentTime += deltaTime
-//        }
-//    }
-//
-//    private func periodicUnit(period: Time) -> Time {
-//        let t = period * stepUnit
-//        let tt = t - floor(t)
-//        return tt < 0.5 ? 2.0 * tt : 2.0 * (1.0 - tt)
-//    }
-//
-//    private var pulseUnit: Time {
-//        let t = stepUnit
-//        return t < 0.5 ? 2.0 * t : 2.0 * (1.0 - t)
-//    }
-//
-//    private var stepUnit: Time {
-//        if currentTime < startTime {
-//            return 0.0
-//        } else if currentTime > endTime {
-//            return 1.0
-//        } else {
-//            return (currentTime - startTime) / (endTime - startTime)
-//        }
-//    }
-//
-//    public var isFinished: Bool {
-//        return currentTime >= endTime
-//    }
-//
-//    public let startValue: T
-//    public let endValue: T
-//
-//    public var currentTime: Time
-//    public let startTime: Time
-//    public let endTime: Time
-//}
-//
-
