@@ -127,6 +127,12 @@ public enum InterpolationMethod {
     
     /// ...
     case easeOutExponential
+
+    /// ...
+    case stepFade
+
+    /// ...
+    case stepSmooth
 }
 
 /// ...
@@ -241,6 +247,11 @@ extension Interpolation {
         case .easeOutExponential:
             let value = distance == 1 ? distance : 1 - InterpolationDistance.pow(2, 10 * (distance - 1))
             return interpolate(from:start, to:end, by:value)
+        case .stepFade:
+            let d3 = distance * distance * distance
+            return interpolate(from:start, to:end, by:d3 * (distance * (distance * 6 - 15) + 10))
+        case .stepSmooth:
+            return interpolate(from:start, to:end, by:distance * distance * (3 - 2 * distance))
         }
     }
     

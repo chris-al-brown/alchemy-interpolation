@@ -63,6 +63,8 @@ Check out 'Demo.playground' for example usage.
 
 3. [Easing Functions Cheat Sheet](http://easings.net)
 
+4. [Useful Little Functions](http://www.iquilezles.org/www/articles/functions/functions.htm)
+
 ## License
 
 AlchemyInterpolation is released under the [MIT License](LICENSE.md).
@@ -72,3 +74,5 @@ AlchemyInterpolation is released under the [MIT License](LICENSE.md).
 - [ ] Add easeInBack, easeInOutBack, easeOutBack methods
 - [ ] Add easeInElastic, easeInOutElastic, easeOutElastic methods
 - [ ] Add easeInBounce, easeInOutBounce, easeOutBounce methods
+- [ ] Add pulseCubic, pulseSmooth, pulseFade, pulseQuilez, pulseTriangle methods
+- [ ] Add cubicBezier method with control points

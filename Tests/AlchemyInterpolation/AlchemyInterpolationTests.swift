@@ -87,7 +87,13 @@ public let easeOutMethods: [InterpolationMethod] = [
 ]
 
 /// ...
-public let allMethods: [InterpolationMethod] = easeInMethods + easeInOutMethods + easeOutMethods
+public let stepMethods: [InterpolationMethod] = [
+    .stepFade,
+    .stepSmooth
+]
+
+/// ...
+public let allMethods: [InterpolationMethod] = easeInMethods + easeInOutMethods + easeOutMethods + stepMethods
 
 /// ...
 public let sampleCount: Int = 10_000
@@ -105,8 +111,9 @@ public class AlchemyInterpolationTests: XCTestCase {
             for method in allMethods {
                 let value = min.interpolated(to:max, by:uniform(), using:method)
                 let minValue = min - CGFloat(DBL_EPSILON)
+                XCTAssert(minValue < value, "\(method) produced \(value) < \(min) with difference: \(value - min)")
                 let maxValue = max + CGFloat(DBL_EPSILON)
-                XCTAssert(minValue < value && value < maxValue, "\(method) produced \(value) outside of [\(min), \(max)]")
+                XCTAssert(value < maxValue, "\(method) produced \(value) > \(max) with difference: \(max - value)")
             }
         }
     }
@@ -121,8 +128,9 @@ public class AlchemyInterpolationTests: XCTestCase {
             for method in allMethods {
                 let value = min.interpolated(to:max, by:uniform(), using:method)
                 let minValue = min - DBL_EPSILON
+                XCTAssert(minValue < value, "\(method) produced \(value) < \(min) with difference: \(value - min)")
                 let maxValue = max + DBL_EPSILON
-                XCTAssert(minValue < value && value < maxValue, "\(method) produced \(value) outside of [\(min), \(max)]")
+                XCTAssert(value < maxValue, "\(method) produced \(value) > \(max) with difference: \(max - value)")
             }
         }
     }
@@ -137,36 +145,68 @@ public class AlchemyInterpolationTests: XCTestCase {
             for method in allMethods {
                 let value = min.interpolated(to:max, by:uniform(), using:method)
                 let minValue = min - FLT_EPSILON
-                let maxValue = max + FLT_EPSILON
-                XCTAssert(minValue < value && value < maxValue, "\(method) produced \(value) outside of [\(min), \(max)]")
+                XCTAssert(minValue < value, "\(method) produced \(value) < \(min) with difference: \(value - min)")
+                /// stepFade accumulates excessive floating point error in calculation
+                let maxValue = (method == .stepFade) ? max + 3 * FLT_EPSILON : max + FLT_EPSILON
+                XCTAssert(value < maxValue, "\(method) produced \(value) > \(max) with difference: \(max - value)")
             }
         }
     }
     
     /// ...
     public func testCGFloatContinuity() {
+        for method in allMethods {
+            let min = CGFloat.interpolate(from:0.0, to:1.0, by:0.0 - CGFloat(DBL_EPSILON))
+            let max = CGFloat.interpolate(from:0.0, to:1.0, by:0.0 + CGFloat(DBL_EPSILON))
+            XCTAssert(max - min <= 2 * CGFloat(DBL_EPSILON), "\(method) is not continuous at 0.0")
+        }
         for method in easeInOutMethods {
             let min = CGFloat.interpolate(from:0.0, to:1.0, by:0.5 - CGFloat(DBL_EPSILON))
             let max = CGFloat.interpolate(from:0.0, to:1.0, by:0.5 + CGFloat(DBL_EPSILON))
             XCTAssert(max - min <= 2 * CGFloat(DBL_EPSILON), "\(method) is not continuous at 0.5")
         }
+        for method in allMethods {
+            let min = CGFloat.interpolate(from:0.0, to:1.0, by:1.0 - CGFloat(DBL_EPSILON))
+            let max = CGFloat.interpolate(from:0.0, to:1.0, by:1.0 + CGFloat(DBL_EPSILON))
+            XCTAssert(max - min <= 2 * CGFloat(DBL_EPSILON), "\(method) is not continuous at 1.0")
+        }
     }
 
     /// ...
     public func testDoubleContinuity() {
+        for method in allMethods {
+            let min = Double.interpolate(from:0.0, to:1.0, by:0.0 - DBL_EPSILON)
+            let max = Double.interpolate(from:0.0, to:1.0, by:0.0 + DBL_EPSILON)
+            XCTAssert(max - min <= 2 * DBL_EPSILON, "\(method) is not continuous at 0.0")
+        }
         for method in easeInOutMethods {
             let min = Double.interpolate(from:0.0, to:1.0, by:0.5 - DBL_EPSILON)
             let max = Double.interpolate(from:0.0, to:1.0, by:0.5 + DBL_EPSILON)
             XCTAssert(max - min <= 2 * DBL_EPSILON, "\(method) is not continuous at 0.5")
         }
+        for method in allMethods {
+            let min = Double.interpolate(from:0.0, to:1.0, by:1.0 - DBL_EPSILON)
+            let max = Double.interpolate(from:0.0, to:1.0, by:1.0 + DBL_EPSILON)
+            XCTAssert(max - min <= 2 * DBL_EPSILON, "\(method) is not continuous at 1.0")
+        }
     }
 
     /// ...
     public func testFloatContinuity() {
+        for method in allMethods {
+            let min = Float.interpolate(from:0.0, to:1.0, by:0.0 - FLT_EPSILON)
+            let max = Float.interpolate(from:0.0, to:1.0, by:0.0 + FLT_EPSILON)
+            XCTAssert(max - min <= 2 * FLT_EPSILON, "\(method) is not continuous at 0.0")
+        }
         for method in easeInOutMethods {
             let min = Float.interpolate(from:0.0, to:1.0, by:0.5 - FLT_EPSILON)
             let max = Float.interpolate(from:0.0, to:1.0, by:0.5 + FLT_EPSILON)
             XCTAssert(max - min <= 2 * FLT_EPSILON, "\(method) is not continuous at 0.5")
+        }
+        for method in allMethods {
+            let min = Float.interpolate(from:0.0, to:1.0, by:1.0 - FLT_EPSILON)
+            let max = Float.interpolate(from:0.0, to:1.0, by:1.0 + FLT_EPSILON)
+            XCTAssert(max - min <= 2 * FLT_EPSILON, "\(method) is not continuous at 1.0")
         }
     }
 
