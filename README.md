@@ -17,7 +17,7 @@
     <a href="#todo">TODO</a>
 </p>
 
-AlchemyInterpolation is a Swift framework for interpolations
+AlchemyInterpolation is a Swift package for interpolations and tweens
 
 ## Requirements
 
@@ -44,7 +44,7 @@ import PackageDescription
 let package = Package(
     name: "MyProjectUsingAlchemyInterpolation",
     dependencies: [
-        .Package(url: "https://github.com/chris-al-brown/alchemy-interpolation", majorVersion: 0, minorVersion: 1)
+        .Package(url: "https://github.com/chris-al-brown/alchemy-interpolation", majorVersion: 0, minor: 1)
     ]
 )
 ```
